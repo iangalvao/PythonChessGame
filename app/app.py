@@ -1,5 +1,6 @@
 import pygame
 import math
+from math import ceil, floor
 # Define colors for different terrain types
 TERRAIN_COLORS = {
     "grass": (34, 139, 34),  # Green
@@ -40,10 +41,38 @@ class GameMap():
         x_dist = abs (posA[0] - posB[0])
         y_dist = abs (posA[1] - posB[1])
         return max(x_dist + y_dist/2, x_dist/2 + y_dist)
-    def get_tile_neighbours(self, tile):
-        pass
-    def get_pos_neighbours(self, pos):
-        pass
+
+    def get_neighbours(self, pos, radius):
+        
+        # Check if the position is out of bounds
+        if self.out_of_bounds(pos):
+            raise ValueError("Invalid coordinates")
+        
+        neighbors = []
+        center_x, center_y = pos
+        search_radius = ceil(radius)
+
+        # Iterate over the tiles within the search radius
+        for i in range(-search_radius, search_radius+1):
+            for j in range(-search_radius, search_radius+1):
+                # Skip the center tile
+                if i == 0 and j == 0:
+                    continue
+                
+                # Calculate the coordinates of the neighboring tile
+                neighbor_x = center_x + i
+                neighbor_y = center_y + j
+                
+                neighbor = (neighbor_x, neighbor_y)
+                # Check if the neighboring tile is within the map boundaries
+                if not self.out_of_bounds(neighbor):
+                    # Check if the neighboring tile is within given radius
+                    if self.point_distance(neighbor, pos) <= radius:
+
+                        neighbors.append(self._tiles[neighbor_x][neighbor_y])
+        
+        return neighbors
+
     def out_of_bounds(self, pos):
         i,j = pos[0], pos[1]
         if i < 0 or i >= MAP_SIZE or j < 0 or j >= MAP_SIZE:
