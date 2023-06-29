@@ -4,5 +4,8 @@ from abc import ABC, abstractmethod
 # Define the interface using an abstract base class
 class CommandPortInterface(ABC):
     @abstractmethod
-    def get_commands(self):
+    def get_line(self):
+        pass
+
+    def run_prompt(self):
         pass

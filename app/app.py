@@ -1,5 +1,8 @@
+import queue
 import pygame
-from gamemap import *
+from controllers.commandHandler import CommandHandler
+from entities.gamemap import *
+from ports.commandPort import CommandPort
 
 # Define colors for different terrain types
 TERRAIN_COLORS = {
@@ -31,6 +34,12 @@ if __name__ == "__main__":
     game_display = pygame.display.set_mode((display_width, display_height))
     pygame.display.set_caption("Map with Terrain")
 
+    # Set up the prompt reader
+    input_queue = queue.Queue()
+    prompt_port = CommandPort(input_queue)
+    command_handler = CommandHandler(prompt_port)
+    prompt_port.run_prompt()
+
     # Create the map array with terrain types
     game_map = GameMap(MAP_SIZE, TerrainGenerator(generate_square_land))
 
@@ -41,7 +50,7 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+        command_handler.execute()
         # Draw the map
         for i in range(MAP_SIZE):
             for j in range(MAP_SIZE):
