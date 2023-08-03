@@ -1,4 +1,6 @@
+from app.entities.unit import Unit
 from app.utilities.coordinates import Coordinate
+from typeguard import typechecked
 
 
 class Tile:
@@ -70,10 +72,15 @@ class Tile:
     def set_terrain(self, terrain):
         self.terrain = terrain
 
-    def add_unit(self, unit):
+    @typechecked
+    def add_unit(self, unit: Unit):
+        assert isinstance(
+            unit.id, int
+        ), f'"unit.id" ({type(unit.id)}) is not an instance of int'
         self.units[unit.id] = unit
         unit.tile = self
         unit.pos = self.pos
 
-    def remove_unit(self, unit_id):
+    @typechecked
+    def remove_unit(self, unit_id: int):
         self.units.pop(unit_id)
