@@ -1,5 +1,7 @@
 from math import ceil, floor
 
+from app.utilities.coordinates import Coordinate
+
 
 class Tile:
     def __init__(self, pos):
@@ -11,7 +13,7 @@ class Tile:
 
         self.pos = pos
 
-        self.units = None
+        self.units = {}
         self.settlement = None
 
     # Getters
@@ -70,11 +72,21 @@ class Tile:
     def set_terrain(self, terrain):
         self.terrain = terrain
 
+    def add_unit(self, unit):
+        self.units[unit.id] = unit
+        unit.tile = self
+        unit.pos = self.pos
+
+    def remove_unit(self, unit_id):
+        self.units.pop(unit_id)
+
 
 class GameMap:
     def __init__(self, size, map_generator=None) -> None:
         self._size = size
-        self._tiles = [[Tile((i, j)) for i in range(size)] for j in range(size)]
+        self._tiles = [
+            [Tile(Coordinate(i, j)) for j in range(size)] for i in range(size)
+        ]
         if map_generator:
             map_generator.generate(self)
 
