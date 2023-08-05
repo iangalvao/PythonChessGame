@@ -87,5 +87,26 @@ def test_walk_handler_calls_presenter_with_correct_args(unit_handler, unit_id, p
     unit_handler.presenter.walk.assert_called_once_with(unit_id, pos)
 
 
+@pytest.mark.parametrize("invalid_id", [32, 12, 0])
+def test_walk_with_invalid_unit_id_should_raise_key_error(unit_handler, invalid_id):
+    coord = Coordinate(1, 0)
+    with pytest.raises(KeyError) as exc_info:
+        unit_handler.walk(invalid_id, coord)
+    assert str(exc_info.value) == f"{invalid_id}"
+
+
+@pytest.mark.parametrize("invalid_dir", [(2, 0), (0, 2), (2, 2), (-1, 0)])
+def test_walk_with_invalid_direction_should_raise_value_error(
+    unit_handler, unit_id, invalid_dir
+):
+    coord = Coordinate(invalid_dir[0], invalid_dir[1])
+    with pytest.raises(ValueError) as exc_info:
+        unit_handler.walk(unit_id, coord)
+    assert (
+        str(exc_info.value)
+        == f"unit_handler.wakr direction arg components should be 0 or 1: {coord}"
+    )
+
+
 # Run the test
 pytest.main()

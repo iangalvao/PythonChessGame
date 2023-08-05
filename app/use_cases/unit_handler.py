@@ -17,6 +17,10 @@ class UnitHandler:
         self.presenter = presenter
 
     def walk(self, unit_id, direction):
+        if direction.x not in (0, 1) or direction.y not in (0, 1):
+            raise ValueError(
+                f"unit_handler.wakr direction arg components should be 0 or 1: {direction}"
+            )
         unit = self.getUnitByID(unit_id)
         x, y = (unit.pos.x, unit.pos.x)
         new_x, new_y = (x + direction.x, y + direction.y)
