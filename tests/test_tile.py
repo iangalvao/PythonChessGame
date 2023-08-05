@@ -1,7 +1,6 @@
 import pytest
 from app.entities.unit import Unit
 from app.entities.tile import Tile
-from app.entities.gamemap import GameMap
 from app.utilities.coordinates import Coordinate
 from typeguard import TypeCheckError
 
@@ -22,13 +21,11 @@ def invalid_unit():
 
 
 @pytest.fixture
-def gamemap():
-    return GameMap(5)
+def tile():
+    return Tile(Coordinate(2, 2))
 
 
-def test_add_unit_to_valid_tile(gamemap, unit, unit_id):
-    tile = gamemap.tiles[2][2]
-
+def test_add_unit_to_valid_tile(tile, unit, unit_id):
     tile.add_unit(unit)
 
     assert unit_id in tile.units.keys()
@@ -37,17 +34,7 @@ def test_add_unit_to_valid_tile(gamemap, unit, unit_id):
     assert unit.pos == tile.pos
 
 
-def test_remove_unit_with_invalid_id_type_should_raise_type_error(gamemap):
-    tile = gamemap.tiles[2][2]
-
-    with pytest.raises(TypeCheckError) as exc_info:
-        tile.remove_unit("foo")
-    assert str(exc_info.value) == 'argument "unit_id" (str) is not an instance of int'
-
-
-def test_add_unit_with_invalid_unit_type_should_raise_type_error(gamemap):
-    tile = gamemap.tiles[2][2]
-
+def test_add_unit_with_invalid_unit_type_should_raise_type_error(tile):
     with pytest.raises(TypeCheckError) as exc_info:
         tile.add_unit("foo")
     assert (
@@ -56,15 +43,19 @@ def test_add_unit_with_invalid_unit_type_should_raise_type_error(gamemap):
     )
 
 
-def test_add_unit_with_invalid_unit_id_should_raise_type_error(gamemap, invalid_unit):
-    tile = gamemap.tiles[2][2]
-
+def test_add_unit_with_invalid_unit_id_should_raise_type_error(tile, invalid_unit):
     with pytest.raises(AssertionError) as exc_info:
         tile.add_unit(invalid_unit)
     assert (
         str(exc_info.value)
         == "\"unit.id\" (<class 'NoneType'>) is not an instance of int"
     )
+
+
+def test_remove_unit_with_invalid_unit_id_type_should_raise_type_error(tile):
+    with pytest.raises(TypeCheckError) as exc_info:
+        tile.remove_unit("foo")
+    assert str(exc_info.value) == 'argument "unit_id" (str) is not an instance of int'
 
 
 # Run the test

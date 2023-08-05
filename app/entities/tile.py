@@ -5,8 +5,8 @@ from typeguard import typechecked
 
 class Tile:
     def __init__(self, pos: Coordinate):
-        self.terrain = None
-        self.terrain_overlay = None
+        self.set_terrain(None)
+        self.set_terrain_overlay(None)
         self.rivers = []
         self.resource = None
         self.improvements = []

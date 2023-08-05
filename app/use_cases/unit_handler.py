@@ -17,14 +17,14 @@ class UnitHandler:
         self.presenter = presenter
 
     def walk(self, unit_id, direction):
-        unit = self.getUnitByID(self, unit_id)
-        x, y = unit.pos
+        unit = self.getUnitByID(unit_id)
+        x, y = (unit.pos.x, unit.pos.x)
         new_x, new_y = (x + direction.x, y + direction.y)
 
-        self.move_unit(unit, (new_x, new_y))
+        self.move_unit(unit, Coordinate(new_x, new_y))
 
         # self.presenter.send_event("walk", unit, (new_x, new_y))
-        self.presenter.walk(unit, (new_x, new_y))
+        self.presenter.walk(unit_id, (new_x, new_y))
 
     def move_unit(self, unit, pos):
         if self.map.out_of_bounds((pos.x, pos.y)):

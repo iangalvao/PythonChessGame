@@ -1,8 +1,9 @@
 import pytest
 from app.entities.unit import Unit
-from app.use_cases.unit_actions import UnitHandler
+from app.use_cases.unit_handler import UnitHandler
 from app.entities.gamemap import GameMap
 from app.utilities.coordinates import Coordinate
+from unittest.mock import MagicMock
 
 
 @pytest.fixture
@@ -18,9 +19,10 @@ def unit_id():
 @pytest.fixture
 def unit_handler(unit_id, start_pos):
     map = GameMap(5)
+    presenter = MagicMock()
     unit = Unit(unit_id, "foo", 0)
     map.tiles[start_pos.x][start_pos.y].add_unit(unit)
-    return UnitHandler(map, {unit_id: unit}, None)
+    return UnitHandler(map, {unit_id: unit}, presenter)
 
 
 @pytest.mark.parametrize(
@@ -76,6 +78,13 @@ def test_move_unit_to_its_own_tile_should_raise_value_error(unit_handler, unit_i
     assert old_tile.units[unit_id] == unit
     assert unit.tile == old_tile
     assert unit.pos == old_tile.pos
+
+
+@pytest.mark.parametrize("pos", [(0, 1), (1, 0), (1, 1)])
+def test_walk_handler_calls_presenter_with_correct_args(unit_handler, unit_id, pos):
+    coord = Coordinate(pos[0], pos[1])
+    unit_handler.walk(unit_id, coord)
+    unit_handler.presenter.walk.assert_called_once_with(unit_id, pos)
 
 
 # Run the test
