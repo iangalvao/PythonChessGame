@@ -78,8 +78,6 @@ class Tile:
             unit.id, int
         ), f'"unit.id" ({type(unit.id)}) is not an instance of int'
         self.units[unit.id] = unit
-        unit.tile = self
-        unit.pos = self.pos
 
     @typechecked
     def remove_unit(self, unit_id: int):

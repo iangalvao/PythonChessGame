@@ -21,8 +21,6 @@ class UnitHandler:
         self.units = units
         self.presenter = presenter
 
-    # valid input generate the right self calls (move_unit (id, coord+dir))
-
     @typechecked
     def walk(self, unit_id: int, direction: Coordinate) -> None:
         if direction.x not in (-1, 0, 1) or direction.y not in (-1, 0, 1):
@@ -37,11 +35,7 @@ class UnitHandler:
             self.presenter.walk(unit_id, (new_pos.x, new_pos.y))
 
         except ValueError as e:
-            # Handle the error, maybe log it for debugging purposes
-            # and inform the user through the presenter
             self.presenter.show_error_message(str(e))
-
-        # self.presenter.send_event("walk", unit, (new_x, new_y))
 
     @typechecked
     def move_unit(self, unit: Unit, pos: Coordinate) -> None:
@@ -51,10 +45,15 @@ class UnitHandler:
             raise ValueError("Moving unit to it's own position!")
         tile = unit.tile
         new_tile = self.map.tiles[pos.x][pos.y]
-
-        new_tile.add_unit(unit)
+        self.add_unit_to_tile(unit, new_tile)
         tile.remove_unit(unit.id)
 
     @typechecked
     def getUnitByID(self, unit_id: int) -> Unit:
         return self.units[unit_id]
+
+    @typechecked
+    def add_unit_to_tile(self, unit: Unit, tile: Tile):
+        tile.add_unit(unit)
+        unit.tile = tile
+        unit.pos = tile.pos

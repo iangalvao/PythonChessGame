@@ -22,6 +22,8 @@ def unit_handler(unit_id, start_pos):
     presenter = MagicMock()
     unit = Unit(unit_id, "foo", 0)
     map.tiles[start_pos.x][start_pos.y].add_unit(unit)
+    unit.pos = start_pos
+    unit.tile = map.tiles[start_pos.x][start_pos.y]
     return UnitHandler(map, {unit_id: unit}, presenter)
 
 
@@ -81,7 +83,9 @@ def test_move_unit_to_its_own_tile_should_raise_value_error(unit_handler, unit_i
 
 
 @pytest.mark.parametrize("pos", [(0, 1), (1, 0), (1, 1)])
-def test_walk_handler_calls_presenter_with_correct_args(unit_handler, unit_id, pos):
+def test_walk_handler_calls_presenter_and_move_with_correct_args(
+    unit_handler, unit_id, pos
+):
     coord = Coordinate(pos[0], pos[1])
     unit = unit_handler.units[unit_id]
     # Mock the helper_method to return a specific value

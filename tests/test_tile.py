@@ -30,8 +30,6 @@ def test_add_unit_to_valid_tile(tile, unit, unit_id):
 
     assert unit_id in tile.units.keys()
     assert tile.units[unit_id] == unit
-    assert unit.tile == tile
-    assert unit.pos == tile.pos
 
 
 def test_add_unit_with_invalid_unit_type_should_raise_type_error(tile):
@@ -52,7 +50,7 @@ def test_add_unit_with_invalid_unit_id_should_raise_type_error(tile, invalid_uni
     )
 
 
-def test_remove_unit_with_invalid_unit_id_type_should_raise_type_error(tile):
+def test_remove_unit_with_invalid_unit_type_should_raise_type_error(tile):
     with pytest.raises(TypeCheckError) as exc_info:
         tile.remove_unit("foo")
     assert str(exc_info.value) == 'argument "unit_id" (str) is not an instance of int'
