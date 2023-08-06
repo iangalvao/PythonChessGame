@@ -29,7 +29,7 @@ class GameMap:
     @typechecked
     def point_distance(self, posA: Coordinate, posB: Coordinate) -> float:
         if self.out_of_bounds(posA) or self.out_of_bounds(posB):
-            raise ValueError("Invalid coordinates")
+            raise ValueError("Invalid Coordinates.")
         x_dist = abs(posA.x - posB.x)
         y_dist = abs(posA.y - posB.y)
         return max(x_dist + y_dist / 2, x_dist / 2 + y_dist)
@@ -37,7 +37,7 @@ class GameMap:
     @typechecked
     def get_neighbours(self, center_pos: Coordinate, radius: float) -> List[Tile]:
         if self.out_of_bounds(center_pos):
-            raise ValueError("Invalid coordinates")
+            raise ValueError("Invalid Coordinates.")
 
         neighbors = []
         search_radius = ceil(radius)

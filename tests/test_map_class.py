@@ -33,6 +33,17 @@ def test_game_map_distance(game_map, point_a, point_b, expected_result):
     print("point_distance test passed!")
 
 
+# invalid point a, point b coords (out of bound)
+@pytest.mark.parametrize(
+    "invalid_coord", [(-1, 0), (0, -1), (5, 0), (0, 5), (5, 5), (-1, -1)]
+)
+def test_game_map_point_distance_invalid_inputs(game_map: GameMap, invalid_coord):
+    invalid_coord = Coordinate(invalid_coord[0], invalid_coord[1])
+    with pytest.raises(ValueError) as exc_info:
+        game_map.point_distance(invalid_coord, Coordinate(0, 0))
+    assert str(exc_info.value) == "Invalid Coordinates."
+
+
 @pytest.mark.parametrize(
     "center, radius, expected_result",
     [
@@ -58,6 +69,11 @@ def test_get_neighbours_valid_inputs(game_map, center, radius, expected_result):
         coord = Coordinate(x, y)
         assert game_map.get_tile(coord) in neighbors
     print("get_neighbours test passed!")
+
+
+# center position out of bounds
+# invalid radius argument
+# whole map with minimum needed radius? (3/4 * map.size) Test on size 4
 
 
 # Run the test
