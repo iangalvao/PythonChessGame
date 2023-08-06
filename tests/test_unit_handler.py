@@ -3,7 +3,7 @@ from app.entities.unit import Unit
 from app.use_cases.unit_handler import UnitHandler
 from app.entities.gamemap import GameMap
 from app.utilities.coordinates import Coordinate
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 @pytest.fixture
@@ -83,8 +83,12 @@ def test_move_unit_to_its_own_tile_should_raise_value_error(unit_handler, unit_i
 @pytest.mark.parametrize("pos", [(0, 1), (1, 0), (1, 1)])
 def test_walk_handler_calls_presenter_with_correct_args(unit_handler, unit_id, pos):
     coord = Coordinate(pos[0], pos[1])
-    unit_handler.walk(unit_id, coord)
-    unit_handler.presenter.walk.assert_called_once_with(unit_id, pos)
+    unit = unit_handler.units[unit_id]
+    # Mock the helper_method to return a specific value
+    with patch.object(unit_handler, "move_unit", return_value=None) as mocker_move:
+        unit_handler.walk(unit_id, coord)
+        mocker_move.assert_called_once_with(unit, coord)
+        unit_handler.presenter.walk.assert_called_once_with(unit_id, pos)
 
 
 @pytest.mark.parametrize("invalid_id", [32, 12, 0])
@@ -105,6 +109,27 @@ def test_walk_with_invalid_direction_should_raise_value_error(
     assert (
         str(exc_info.value)
         == f"unit_handler.wakr direction arg components should be 0 or 1: {coord}"
+    )
+
+
+@pytest.mark.parametrize("direction", [(0, -1), (-1, 0), (-1, -1)])
+def test_walk_to_out_of_bounds_position_should_call_presenter_show_error_message(
+    unit_handler, unit_id, direction
+):
+    coord = Coordinate(direction[0], direction[1])
+    unit_handler.walk(unit_id, coord)
+    unit_handler.presenter.show_error_message.assert_called_once_with(
+        "Moving unit to position out of bounds!"
+    )
+
+
+def test_walk_to_units_own_position_should_call_presenter_show_error_message(
+    unit_handler, unit_id
+):
+    coord = Coordinate(0, 0)
+    unit_handler.walk(unit_id, coord)
+    unit_handler.presenter.show_error_message.assert_called_once_with(
+        "Moving unit to it's own position!"
     )
 
 
