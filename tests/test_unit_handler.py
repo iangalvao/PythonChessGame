@@ -95,7 +95,7 @@ def test_walk_with_invalid_unit_id_should_raise_key_error(unit_handler, invalid_
     assert str(exc_info.value) == f"{invalid_id}"
 
 
-@pytest.mark.parametrize("invalid_dir", [(2, 0), (0, 2), (2, 2), (-1, 0)])
+@pytest.mark.parametrize("invalid_dir", [(2, 0), (0, 2), (2, 2), (-2, 0)])
 def test_walk_with_invalid_direction_should_raise_value_error(
     unit_handler, unit_id, invalid_dir
 ):

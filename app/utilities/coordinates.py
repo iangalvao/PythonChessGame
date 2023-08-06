@@ -11,3 +11,6 @@ class Coordinate:
             if self.y == other.y:
                 return True
         return False
+
+    def __add__(self, other):
+        return Coordinate(self.x + other.x, self.y + other.y)
