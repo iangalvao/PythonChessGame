@@ -21,11 +21,8 @@ class UnitHandler:
         self.units = units
         self.presenter = presenter
 
-    # invalid coordinates (not in (-1,0,1))
-    # invalid unit id (non existent)
     # valid input generate the right self calls (move_unit (id, coord+dir))
-    # valid input generate the right walk calls (walk (id, coord+dir))
-    # valid input but invalid unit pos should raise error (check olnly in move_unit )
+
     @typechecked
     def walk(self, unit_id: int, direction: Coordinate) -> None:
         if direction.x not in (-1, 0, 1) or direction.y not in (-1, 0, 1):
