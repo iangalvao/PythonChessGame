@@ -1,4 +1,6 @@
-from math import ceil, floor
+from math import ceil
+from typing import List
+from typeguard import typechecked
 from app.entities.tile import Tile
 from app.utilities.coordinates import Coordinate
 
@@ -20,20 +22,24 @@ class GameMap:
     def tiles(self):
         return self._tiles
 
-    def point_distance(self, posA, posB):
+    @typechecked
+    def get_tile(self, pos: Coordinate) -> Tile:
+        return self.tiles[pos.x][pos.y]
+
+    @typechecked
+    def point_distance(self, posA: Coordinate, posB: Coordinate) -> float:
         if self.out_of_bounds(posA) or self.out_of_bounds(posB):
             raise ValueError("Invalid coordinates")
-        x_dist = abs(posA[0] - posB[0])
-        y_dist = abs(posA[1] - posB[1])
+        x_dist = abs(posA.x - posB.x)
+        y_dist = abs(posA.y - posB.y)
         return max(x_dist + y_dist / 2, x_dist / 2 + y_dist)
 
-    def get_neighbours(self, pos, radius):
-        # Check if the position is out of bounds
-        if self.out_of_bounds(pos):
+    @typechecked
+    def get_neighbours(self, center_pos: Coordinate, radius: float) -> List[Tile]:
+        if self.out_of_bounds(center_pos):
             raise ValueError("Invalid coordinates")
 
         neighbors = []
-        center_x, center_y = pos
         search_radius = ceil(radius)
 
         # Iterate over the tiles within the search radius
@@ -43,22 +49,19 @@ class GameMap:
                 if i == 0 and j == 0:
                     continue
 
-                # Calculate the coordinates of the neighboring tile
-                neighbor_x = center_x + i
-                neighbor_y = center_y + j
-
-                neighbor = (neighbor_x, neighbor_y)
+                # Calculate the coordinates of the neighbor candidate tile.
+                neighbor = Coordinate(center_pos.x + i, center_pos.y + j)
                 # Check if the neighboring tile is within the map boundaries
                 if not self.out_of_bounds(neighbor):
                     # Check if the neighboring tile is within given radius
-                    if self.point_distance(neighbor, pos) <= radius:
-                        neighbors.append(self._tiles[neighbor_x][neighbor_y])
+                    if self.point_distance(center_pos, neighbor) <= radius:
+                        neighbors.append(self.get_tile(neighbor))
 
         return neighbors
 
-    def out_of_bounds(self, pos):
-        i, j = pos[0], pos[1]
-        if i < 0 or i >= self.size or j < 0 or j >= self.size:
+    @typechecked
+    def out_of_bounds(self, pos: Coordinate) -> bool:
+        if pos.x < 0 or pos.x >= self.size or pos.y < 0 or pos.y >= self.size:
             return True
         return False
 
@@ -67,7 +70,7 @@ class TerrainGenerator:
     def __init__(self, gen_function) -> None:
         self.generate_ = gen_function
 
-    def generate(self, map):
+    def generate(self, map: GameMap) -> None:
         self.generate_(map)
 
 

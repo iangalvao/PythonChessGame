@@ -7,3 +7,6 @@ class TerminalPresenter(PresenterInterface):
 
     def walk(self, unit_id, pos):
         print(f"Event: walk {unit_id} {pos}")
+
+    def show_error_message(self, s: str):
+        print(s)

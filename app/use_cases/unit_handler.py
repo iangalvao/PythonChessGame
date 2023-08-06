@@ -6,7 +6,7 @@ from app.utilities.coordinates import Coordinate
 from app.presenters.presenterInterface import PresenterInterface
 
 
-class UnitHandlerInterface:
+class UnitHandlerInterface(ABC):
     @abstractmethod
     def walk(self, unit, direction):
         pass
@@ -25,7 +25,7 @@ class UnitHandler:
     def walk(self, unit_id: int, direction: Coordinate) -> None:
         if direction.x not in (-1, 0, 1) or direction.y not in (-1, 0, 1):
             raise ValueError(
-                f"unit_handler.wakr direction arg components should be 0 or 1: {direction}"
+                f"unit_handler.walk direction arg components should be -1, 0 or 1: {direction}"
             )
         try:
             unit = self.getUnitByID(unit_id)
@@ -39,12 +39,12 @@ class UnitHandler:
 
     @typechecked
     def move_unit(self, unit: Unit, pos: Coordinate) -> None:
-        if self.map.out_of_bounds((pos.x, pos.y)):
+        if self.map.out_of_bounds(pos):
             raise ValueError("Moving unit to position out of bounds!")
         if unit.pos == pos:
             raise ValueError("Moving unit to it's own position!")
         tile = unit.tile
-        new_tile = self.map.tiles[pos.x][pos.y]
+        new_tile = self.map.get_tile(pos)
         self.add_unit_to_tile(unit, new_tile)
         tile.remove_unit(unit.id)
 

@@ -17,14 +17,19 @@ def unit_id():
 
 
 @pytest.fixture
-def unit_handler(unit_id, start_pos):
+def unit(unit_id):
+    return Unit(unit_id, 0, "foo")
+
+
+@pytest.fixture
+def unit_handler(unit_id, unit, start_pos):
     map = GameMap(5)
     presenter = MagicMock()
-    unit = Unit(unit_id, "foo", 0)
     map.tiles[start_pos.x][start_pos.y].add_unit(unit)
     unit.pos = start_pos
     unit.tile = map.tiles[start_pos.x][start_pos.y]
-    return UnitHandler(map, {unit_id: unit}, presenter)
+    units = {unit_id: unit}
+    return UnitHandler(map, units, presenter)
 
 
 @pytest.mark.parametrize(
@@ -112,7 +117,7 @@ def test_walk_with_invalid_direction_should_raise_value_error(
         unit_handler.walk(unit_id, coord)
     assert (
         str(exc_info.value)
-        == f"unit_handler.wakr direction arg components should be 0 or 1: {coord}"
+        == f"unit_handler.walk direction arg components should be -1, 0 or 1: {coord}"
     )
 
 
@@ -135,6 +140,17 @@ def test_walk_to_units_own_position_should_call_presenter_show_error_message(
     unit_handler.presenter.show_error_message.assert_called_once_with(
         "Moving unit to it's own position!"
     )
+
+
+def test_add_unit_to_tile(unit_handler: UnitHandler, start_pos: Coordinate, unit: Unit):
+    tile = unit_handler.map.tiles[start_pos.x][start_pos.y]
+
+    unit_handler.add_unit_to_tile(unit, tile)
+
+    assert unit.pos == tile.pos
+    assert unit.tile == tile
+    assert unit.id in tile.units.keys()
+    assert tile.units[unit.id] == unit
 
 
 # Run the test

@@ -6,7 +6,7 @@ import queue
 
 # Implement the interface in a separate class
 class CommandPort(CommandPortInterface):
-    def __init__(self, input_queue):
+    def __init__(self, input_queue: queue):
         self.queue = input_queue
 
     def get_command(self):
@@ -24,7 +24,6 @@ class CommandPort(CommandPortInterface):
     def get_line(self):
         if not self.queue.empty():
             input_line = self.queue.get().split(" ")
-            command = input_line[0]
             return input_line
         return None
 

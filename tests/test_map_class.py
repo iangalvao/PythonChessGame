@@ -1,5 +1,6 @@
 import pytest
 from app.entities.gamemap import GameMap, Tile
+from app.utilities.coordinates import Coordinate
 
 
 @pytest.fixture
@@ -23,7 +24,12 @@ def game_map():
     ],
 )
 def test_game_map_distance(game_map, point_a, point_b, expected_result):
-    assert game_map.point_distance(point_a, point_b) == expected_result
+    assert (
+        game_map.point_distance(
+            Coordinate(point_a[0], point_a[1]), Coordinate(point_b[0], point_b[1])
+        )
+        == expected_result
+    )
     print("point_distance test passed!")
 
 
@@ -41,13 +47,16 @@ def test_game_map_distance(game_map, point_a, point_b, expected_result):
     ],
 )
 def test_get_neighbours_valid_inputs(game_map, center, radius, expected_result):
+    center = Coordinate(center[0], center[1])
     neighbors = game_map.get_neighbours(center, radius)
-    # center tile not in neighbors
-    assert game_map.tiles[center[0]][center[1]] not in neighbors
+
+    assert game_map.get_tile(center) not in neighbors
+
     # expected tiles should be in neighbors
     for pos in expected_result:
         x, y = pos
-        assert game_map.tiles[x][y] in neighbors
+        coord = Coordinate(x, y)
+        assert game_map.get_tile(coord) in neighbors
     print("get_neighbours test passed!")
 
 
