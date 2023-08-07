@@ -11,7 +11,7 @@ class CommandPort(CommandPortInterface):
 
     def get_command(self):
         command, args = None
-        line = self.get_line
+        line = self.get_line()
 
         if line:
             prompt = line.split()

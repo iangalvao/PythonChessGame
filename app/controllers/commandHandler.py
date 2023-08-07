@@ -1,3 +1,4 @@
+from typeguard import typechecked
 from ports.commandPortInterface import CommandPortInterface
 from controllers.commandHandlerInterface import CommandHandlerInterface
 from app.use_cases.unit_handler import UnitHandlerInterface
@@ -30,7 +31,8 @@ class CommandHandler(CommandHandlerInterface):
         direction = Coordinate(self.parse_direction(int(direction)))
         self.unit_handler.walk(unit_id, direction)
 
-    def parse_direction(self, direction):
+    @typechecked
+    def parse_direction(self, direction: str):
         dir = (0, 0)
         i = 0
         j = 1

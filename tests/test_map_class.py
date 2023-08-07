@@ -102,7 +102,6 @@ def test_get_neighbours_invalid_center_coordinate_should_raise_value_error(
     assert str(exc_info.value) == "Invalid Coordinates."
 
 
-# center position out of bounds
 # invalid radius argument
 # whole map with minimum needed radius? (3/4 * map.size) Test on size 4
 
