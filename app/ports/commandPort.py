@@ -21,7 +21,7 @@ class CommandPort(CommandPortInterface):
 
         return (command, args)
 
-    def get_line(self, x):
+    def get_line(self):
         if not self.queue.empty():
             input_line = self.queue.get().split(" ")
             return input_line
