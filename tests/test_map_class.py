@@ -116,7 +116,7 @@ def test_call_to_get_neighbours_with_invalid_radius_should_raise_value_error(
 # whole map with minimum needed radius? (3/4 * map.size) Test on size 4
 
 
-def test_call_to_get_neighbours_with_very_large_radius_should_execute_quickly(
+def test_call_to_get_neighbours_with_large_radius_should_execute_quickly(
     game_map: GameMap,
 ):
     large_radius = 1000000000
