@@ -1,13 +1,14 @@
 from typeguard import typechecked
-from ports.commandPortInterface import CommandPortInterface
-from controllers.commandHandlerInterface import CommandHandlerInterface
+from app.ports.commandPortInterface import CommandPortInterface
+from app.controllers.commandHandlerInterface import CommandHandlerInterface
 from app.use_cases.unit_handler import UnitHandlerInterface
-from utilities.coordinates import Coordinate
+from app.utilities.coordinates import Coordinate
 
 
 class CommandHandler(CommandHandlerInterface):
     def __init__(self, port: CommandPortInterface, unit_handler: UnitHandlerInterface):
         self.port = port
+        self.unit_handler = unit_handler
 
     def execute(self):
         # Check requests
@@ -28,11 +29,12 @@ class CommandHandler(CommandHandlerInterface):
 
     def walk(self, args):
         unit_id, direction = args
-        direction = Coordinate(self.parse_direction(int(direction)))
+        unit_id = int(unit_id)
+        direction = self.parse_direction(int(direction))
         self.unit_handler.walk(unit_id, direction)
 
     @typechecked
-    def parse_direction(self, direction: str):
+    def parse_direction(self, direction: int):
         dir = (0, 0)
         i = 0
         j = 1
@@ -42,4 +44,4 @@ class CommandHandler(CommandHandlerInterface):
             aux = j
             j = -i
             i = aux
-        return dir
+        return Coordinate(dir[0], dir[1])
