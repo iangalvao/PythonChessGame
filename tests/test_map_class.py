@@ -102,8 +102,26 @@ def test_get_neighbours_invalid_center_coordinate_should_raise_value_error(
     assert str(exc_info.value) == "Invalid Coordinates."
 
 
+@pytest.mark.parametrize("invalid_radius", [-1, -1.5])
+def test_call_to_get_neighbours_with_invalid_radius_should_raise_value_error(
+    game_map: GameMap, invalid_radius
+):
+    center = Coordinate(0, 0)
+    with pytest.raises(ValueError) as exc_info:
+        game_map.get_neighbours(center, invalid_radius)
+    assert str(exc_info.value) == "Invalid radius argument."
+
+
 # invalid radius argument
 # whole map with minimum needed radius? (3/4 * map.size) Test on size 4
+
+
+def test_call_to_get_neighbours_with_very_large_radius_should_execute_quickly(
+    game_map: GameMap,
+):
+    large_radius = 1000000000
+    center = Coordinate(0, 0)
+    game_map.get_neighbours(center, large_radius)
 
 
 # Run the test

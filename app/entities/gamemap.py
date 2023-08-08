@@ -39,8 +39,11 @@ class GameMap:
         if self.out_of_bounds(center_pos):
             raise ValueError("Invalid Coordinates.")
 
+        if radius < 0:
+            raise ValueError("Invalid radius argument.")
+
         neighbors = []
-        search_radius = ceil(radius)
+        search_radius = ceil(min(radius, 3 / 4 * self.size))
 
         # Iterate over the tiles within the search radius
         for i in range(-search_radius, search_radius + 1):

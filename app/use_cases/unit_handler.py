@@ -37,6 +37,8 @@ class UnitHandler:
         except ValueError as e:
             self.presenter.show_error_message(str(e))
 
+        # add except KeyError
+
     @typechecked
     def move_unit(self, unit: Unit, pos: Coordinate) -> None:
         if self.map.out_of_bounds(pos):
