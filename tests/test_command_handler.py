@@ -33,3 +33,11 @@ def test_call_to_walk_with_valid_arguments_should_call_unit_handler_walk(
         command_handler.unit_handler.walk.assert_called_once_with(
             unit_id, parsed_direction
         )
+
+
+def test_call_to_walk_with_invalid_direction_should_raise_value_error(
+    command_handler: CommandHandler,
+):
+    with pytest.raises(ValueError) as exc_info:
+        command_handler.walk(["63", "12"])
+    assert str(exc_info.value) == ("Invalid direction.")

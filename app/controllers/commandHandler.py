@@ -35,6 +35,9 @@ class CommandHandler(CommandHandlerInterface):
 
     @typechecked
     def parse_direction(self, direction: int):
+        if direction not in range(10) or direction == 5:
+            raise ValueError("Invalid direction.")
+
         dir = (0, 0)
         i = 0
         j = 1
