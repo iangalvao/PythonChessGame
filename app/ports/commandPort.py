@@ -1,13 +1,13 @@
 from ports.commandPortInterface import CommandPortInterface
-from controllers.commandHandlerInterface import CommandHandlerInterface
+from app.router.router import RouterInterface
 import threading
 import queue
 
 
 # Implement the interface in a separate class
 class CommandPort(CommandPortInterface):
-    def __init__(self, input_queue: queue):
-        self.queue = input_queue
+    def __init__(self, router: RouterInterface):
+        self.router = RouterInterface
 
     def get_command(self):
         command, args = None
@@ -29,10 +29,10 @@ class CommandPort(CommandPortInterface):
 
     def input_thread(self, x):
         while True:
-            command = input("(pyCiv3)$ ")
-            self.queue.put(command)
+            input_line = input("(pyCiv3)$ ")
+            self.router.execute(input_line.split())
 
-    def run_prompt(self):
+    def listen(self):
         # Create a queue for communication between threads
 
         # Start the input thread

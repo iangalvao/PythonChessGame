@@ -7,5 +7,5 @@ class CommandPortInterface(ABC):
     def get_line(self):
         pass
 
-    def run_prompt(self):
+    def listen(self):
         pass
