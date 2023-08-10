@@ -3,5 +3,5 @@ from abc import ABC, abstractmethod
 
 class CommandHandlerInterface(ABC):
     @abstractmethod
-    def execute(self, input_line):
+    def walk(self, args):
         pass

@@ -10,23 +10,6 @@ class CommandHandler(CommandHandlerInterface):
         self.port = port
         self.unit_handler = unit_handler
 
-    def execute(self):
-        # Check requests
-        # Instantitate the request object model
-        command, args = self.port.get_command()
-        if not command:
-            return
-
-        # Handle the request object
-        if command == "quit":
-            exit(0)
-        elif command == "walk":
-            # Check if the package conforms to the request ( can i pass the object entirely?)
-            if len(args) == 2:
-                self.walk(args)
-        else:
-            print("Comando não reconhecido.\nEnter a Command:")
-
     def walk(self, args):
         unit_id, direction = args
         unit_id = int(unit_id)
