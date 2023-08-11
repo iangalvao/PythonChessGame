@@ -14,3 +14,6 @@ class Coordinate:
 
     def __add__(self, other):
         return Coordinate(self.x + other.x, self.y + other.y)
+
+    def __repr__(self) -> str:
+        return "Coordinate " + self.__str__()

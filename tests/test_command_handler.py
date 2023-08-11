@@ -1,3 +1,4 @@
+from typing import Tuple
 import pytest
 from app.utilities.coordinates import Coordinate
 from unittest.mock import MagicMock, patch
@@ -41,3 +42,16 @@ def test_call_to_walk_with_invalid_direction_should_raise_value_error(
     with pytest.raises(ValueError) as exc_info:
         command_handler.walk(["63", "12"])
     assert str(exc_info.value) == ("Invalid direction.")
+
+
+@pytest.mark.parametrize(
+    "input_direction, expected_result",
+    [(1, (-1, -1)), (2, (0, -1)), (8, (0, 1)), (9, (1, 1))],
+)
+def test_call_to_parse_direction_with_valid_args(
+    command_handler: CommandHandler,
+    input_direction: int,
+    expected_result: Tuple[int, int],
+):
+    result = command_handler.parse_direction(input_direction)
+    assert result == Coordinate(expected_result[0], expected_result[1])
