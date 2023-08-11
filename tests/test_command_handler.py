@@ -46,7 +46,7 @@ def test_call_to_walk_with_invalid_direction_should_raise_value_error(
 
 @pytest.mark.parametrize(
     "input_direction, expected_result",
-    [(1, (-1, -1)), (2, (0, -1)), (8, (0, 1)), (9, (1, 1))],
+    [(1, (-1, -1)), (2, (0, -1)), (3, (1, -1)), (8, (0, 1)), (9, (1, 1))],
 )
 def test_call_to_parse_direction_with_valid_args(
     command_handler: CommandHandler,
@@ -55,3 +55,12 @@ def test_call_to_parse_direction_with_valid_args(
 ):
     result = command_handler.parse_direction(input_direction)
     assert result == Coordinate(expected_result[0], expected_result[1])
+
+
+@pytest.mark.parametrize("invalid_direction", [5, 10, -1])
+def test_call_to_parse_direction_with_invalid_args_should_raise_value_error(
+    command_handler: CommandHandler, invalid_direction: int
+):
+    with pytest.raises(ValueError) as exc_info:
+        command_handler.parse_direction(invalid_direction)
+    assert str(exc_info.value) == "Invalid direction."
