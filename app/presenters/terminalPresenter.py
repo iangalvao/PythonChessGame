@@ -1,4 +1,4 @@
-from presenterInterface import PresenterInterface
+from app.presenters.presenterInterface import PresenterInterface
 
 
 class TerminalPresenter(PresenterInterface):
@@ -9,4 +9,4 @@ class TerminalPresenter(PresenterInterface):
         print(f"Event: walk {unit_id} {pos}")
 
     def show_error_message(self, s: str):
-        print(s)
+        print("Error:" + s)

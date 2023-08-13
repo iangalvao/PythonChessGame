@@ -18,6 +18,7 @@ class Router(RouterInterface):
     def execute(self, request):
         # Check requests
         # Instantitate the request object model
+
         command, args = request[0], request[1:]
         if not command:
             return
@@ -29,4 +30,4 @@ class Router(RouterInterface):
             if len(args) == 2:
                 self.controller.walk(args)
         else:
-            print("Comando não reconhecido.\nEnter a Command:")
+            print("Comando não reconhecido.")

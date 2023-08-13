@@ -10,7 +10,7 @@ def router():
     return Router(commandHandler())
 
 
-def test_call_to_execute_with_valid_inputs(router):
+def test_call_to_execute_with_walk_command(router):
     router.execute(["walk", "63", "6"])
     router.controller.walk.assert_called_once_with(["63", "6"])
 

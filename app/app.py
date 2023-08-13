@@ -1,79 +1,25 @@
-import queue
-import pygame
-from controllers.commandHandler import CommandHandler
-from entities.gamemap import *
-from ports.commandPort import CommandPort
-
-# Define colors for different terrain types
-TERRAIN_COLORS = {
-    "grass": (34, 139, 34),  # Green
-    "water": (30, 144, 255),  # Blue
-    "mountain": (139, 137, 137),  # Gray
-}
-
-# Define the size of the map and tiles
-MAP_SIZE = 32
-TILE_SIZE = 30
+from app.controllers.commandHandler import CommandHandler
+from app.entities.gamemap import GameMap
+from app.entities.unit import Unit
+from app.utilities.coordinates import Coordinate
+from app.ports.commandPort import CommandPort
+from app.router.router import Router
+from app.presenters.terminalPresenter import TerminalPresenter
+from app.use_cases.unit_handler import UnitHandler
 
 
-def dist_to_color(d):
-    red = 10 * d + 34
-    if red > 255:
-        red = 255
-    color = (red, 139, 34)
-    return color
+class Game:
+    def __init__(self) -> None:
+        gamemap = GameMap(5)
+        unit = Unit(1, 0, "test_unit")
 
+        terminal_presenter = TerminalPresenter()
+        unit_handler = UnitHandler(gamemap, {1: unit}, terminal_presenter)
 
-if __name__ == "__main__":
-    # Initialize Pygame
-    pygame.init()
+        unit_handler.add_unit_to_tile(unit, gamemap.get_tile(Coordinate(2, 2)))
 
-    # Set up the display
-    display_width = MAP_SIZE * TILE_SIZE
-    display_height = MAP_SIZE * TILE_SIZE
-    game_display = pygame.display.set_mode((display_width, display_height))
-    pygame.display.set_caption("Map with Terrain")
+        controller = CommandHandler(unit_handler)
+        router = Router(controller)
+        port = CommandPort(router)
 
-    # Set up the prompt reader
-    input_queue = queue.Queue()
-    prompt_port = CommandPort(input_queue)
-    command_handler = CommandHandler(prompt_port)
-    prompt_port.run_prompt()
-
-    # Create the map array with terrain types
-    game_map = GameMap(MAP_SIZE, TerrainGenerator(generate_square_land))
-
-    # Game loop
-    running = True
-    while running:
-        # Event handling
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        command_handler.execute()
-        # Draw the map
-        for i in range(MAP_SIZE):
-            for j in range(MAP_SIZE):
-                # Calculate the position of the current tile
-                x = i * TILE_SIZE
-                y = j * TILE_SIZE
-                # Get the color for the current terrain type
-                terrain = game_map.tiles[i][j].terrain
-                terrain_color = TERRAIN_COLORS[terrain]
-                if terrain == "grass":
-                    terrain_color = dist_to_color(
-                        game_map.point_distance((i, j), (16, 16))
-                    )
-                # Draw the tile
-                pygame.draw.rect(
-                    game_display, terrain_color, (x, y, TILE_SIZE, TILE_SIZE)
-                )
-                pygame.draw.rect(
-                    game_display, (0, 0, 0), (x, y, TILE_SIZE, TILE_SIZE), 1
-                )
-
-        # Update the display
-        pygame.display.update()
-
-    # Quit the game
-    pygame.quit()
+        port.listen()

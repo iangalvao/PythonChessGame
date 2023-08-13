@@ -1,13 +1,11 @@
 from typeguard import typechecked
-from app.ports.commandPortInterface import CommandPortInterface
 from app.controllers.commandHandlerInterface import CommandHandlerInterface
 from app.use_cases.unit_handler import UnitHandlerInterface
 from app.utilities.coordinates import Coordinate
 
 
 class CommandHandler(CommandHandlerInterface):
-    def __init__(self, port: CommandPortInterface, unit_handler: UnitHandlerInterface):
-        self.port = port
+    def __init__(self, unit_handler: UnitHandlerInterface):
         self.unit_handler = unit_handler
 
     def walk(self, args):
