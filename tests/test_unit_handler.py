@@ -100,15 +100,6 @@ def test_walk_handler_calls_presenter_and_move_with_correct_args(
         unit_handler.presenter.walk.assert_called_once_with(unit_id, direction)
 
 
-# Calls walk using an id that not correspond to any unit in the unit_handler.
-@pytest.mark.parametrize("invalid_id", [32, 12, 0])
-def test_walk_with_invalid_unit_id_should_raise_key_error(unit_handler, invalid_id):
-    coord = Coordinate(1, 0)
-    with pytest.raises(KeyError) as exc_info:
-        unit_handler.walk(invalid_id, coord)
-    assert str(exc_info.value) == f"{invalid_id}"
-
-
 # Calls walk with direction argument out of bound. Direction should be in:
 # (0,-1)|(0,1)|(-1,0)|(1,0)|(1,1)|(-1,-1)|(-1,1)|(1,-1)
 @pytest.mark.parametrize("invalid_dir", [(2, 0), (0, 2), (2, 2), (-2, 0)])
@@ -145,6 +136,19 @@ def test_walk_to_units_own_position_should_call_presenter_show_error_message(
     unit_handler.presenter.show_error_message.assert_called_once_with(
         "Moving unit to it's own position!"
     )
+
+
+# the arguments passed attemps to move the unit to a out of bounds position
+@pytest.mark.parametrize("invalid_unit_id", [0, 1, 62])
+def test_walk_with_invalid_unit_id_should_call_presenter_show_error_message(
+    unit_handler, invalid_unit_id
+):
+    coord = Coordinate(1, 0)
+    unit_handler.walk(invalid_unit_id, coord)
+    unit_handler.presenter.show_error_message.assert_called_once_with(
+        "Could not locate requested unit."
+    )
+
 
 # change that. i'm testing 2 functions.
 def test_add_unit_to_tile(unit_handler: UnitHandler, start_pos: Coordinate, unit: Unit):

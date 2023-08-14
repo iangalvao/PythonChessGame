@@ -27,6 +27,21 @@ class UnitHandler:
             raise ValueError(
                 f"unit_handler.walk direction arg components should be -1, 0 or 1: {direction}"
             )
+
+        # try:
+        #    unit = self.getUnitByID(unit_id)
+        #    new_pos = unit.pos + direction
+        #    action = check_if_movable(tile, unit)
+        #    if action == "move":
+        #       self.move_unit(unit, new_pos)
+        #    if action == "combat":
+        #       self.attack(unit, new_pos)
+        #    self.presenter.send_event(action + ...)
+        # except ValueError as e:
+        #   self.presenter.send_error_message(str(e))
+        # except KeyError as e:
+        #   self.presenter.send_error_message(str(e))
+
         try:
             unit = self.getUnitByID(unit_id)
             new_pos = unit.pos + direction
@@ -36,8 +51,6 @@ class UnitHandler:
 
         except ValueError as e:
             self.presenter.show_error_message(str(e))
-
-        # add except KeyError
 
     @typechecked
     def move_unit(self, unit: Unit, pos: Coordinate) -> None:
@@ -52,6 +65,8 @@ class UnitHandler:
 
     @typechecked
     def getUnitByID(self, unit_id: int) -> Unit:
+        if unit_id not in self.units.keys():
+            raise ValueError("Could not locate requested unit.")
         return self.units[unit_id]
 
     @typechecked
@@ -59,3 +74,7 @@ class UnitHandler:
         tile.add_unit(unit)
         unit.tile = tile
         unit.pos = tile.pos
+
+    @typechecked
+    def next_turn(self, unit: Unit):
+        pass
