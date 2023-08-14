@@ -1,12 +1,16 @@
 from typeguard import typechecked
 from app.controllers.commandHandlerInterface import CommandHandlerInterface
+from app.use_cases.match_handler import MatchHandlerInterface
 from app.use_cases.unit_handler import UnitHandlerInterface
 from app.utilities.coordinates import Coordinate
 
 
 class CommandHandler(CommandHandlerInterface):
-    def __init__(self, unit_handler: UnitHandlerInterface):
+    def __init__(
+        self, unit_handler: UnitHandlerInterface, match_handler: MatchHandlerInterface
+    ):
         self.unit_handler = unit_handler
+        self.match_handler = match_handler
 
     def walk(self, args):
         unit_id, direction = args
@@ -29,3 +33,6 @@ class CommandHandler(CommandHandlerInterface):
             j = -i
             i = aux
         return Coordinate(dir[0], dir[1])
+
+    def next_turn(self):
+        self.match_handler.next_turn()

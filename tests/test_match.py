@@ -10,7 +10,9 @@ def match():
 
 
 @pytest.mark.parametrize("player, next_player", [(0, 1), (1, 2), (3, 0)])
-def test_next_turn_with_valid_arguments(match: Match, player: int, next_player: int):
+def test_call_to_next_turn_should_increment_active_player(
+    match: Match, player: int, next_player: int
+):
     match.active_player = player
     match.next_turn()
     assert match.active_player == next_player

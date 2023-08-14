@@ -9,3 +9,6 @@ class Match:
     def next_turn(self):
         self.active_player += 1
         self.active_player %= self.n_players
+        if self.active_player == 0:
+            self.turn += 1
+        # self.players[self.active_player].start_turn()

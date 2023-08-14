@@ -9,7 +9,8 @@ from app.controllers.commandHandler import CommandHandler
 def command_handler():
     port = MagicMock()
     unit_handler = MagicMock()
-    return CommandHandler(unit_handler)
+    match_handler = MagicMock()
+    return CommandHandler(unit_handler, match_handler)
 
 
 @pytest.mark.parametrize(

@@ -29,5 +29,7 @@ class Router(RouterInterface):
             # Check if the package conforms to the request ( can i pass the object entirely?)
             if len(args) == 2:
                 self.controller.walk(args)
+        elif command == "next_turn":
+            self.controller.next_turn()
         else:
             print("Comando não reconhecido.")
