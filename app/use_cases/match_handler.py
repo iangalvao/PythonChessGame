@@ -18,7 +18,7 @@ class MatchHandler(MatchHandlerInterface):
 
     def next_turn(self):
         self.match.next_turn()
-        self.presenter.next_turn(self.match.turn)
+        self.presenter.next_turn(self.match.get_turn())
         self.start_turn(self.match.get_active_player())
 
     @typechecked
