@@ -78,6 +78,3 @@ class UnitHandler:
     @typechecked
     def next_turn(self, unit: Unit):
         pass
-    
-    def horse_moves():
-        pass
