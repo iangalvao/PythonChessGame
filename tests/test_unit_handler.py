@@ -8,17 +8,17 @@ from unittest.mock import MagicMock, patch
 
 @pytest.fixture
 def start_pos():
-    return Coordinate(0, 0)
+    return Coordinate(2, 2)
 
 
 @pytest.fixture
 def unit_id():
-    return 63
+    return "KH"
 
 
 @pytest.fixture
 def unit(unit_id):
-    return Unit(unit_id, 0, "foo")
+    return Unit(unit_id, 0, "H")
 
 
 @pytest.fixture
@@ -34,20 +34,27 @@ def unit_handler(unit_id, unit, start_pos):
 
 @pytest.mark.parametrize(
     "pos",
-    [Coordinate(1, 1), Coordinate(2, 3), Coordinate(4, 4)],
+    [(4, 3), (3, 4)],
 )
-def test_move_unit_to_valid_pos(unit_handler, unit_id, pos):
-    unit = unit_handler.units[63]
+@patch("app.use_cases.unit_handler.UnitHandler.add_unit_to_tile", return_value=None)
+@patch("app.use_cases.unit_handler.UnitHandler.check_move", return_value=True)
+def test_call_to_moveUnit_should_call_checkMove_and_addUnitToTile(
+    check_moves_mocker, add_unit_to_tile_mocker, pos, unit_handler: UnitHandler, unit_id
+):
+    unit = unit_handler.units[unit_id]
+    pos = Coordinate(pos[0], pos[1])
     old_tile = unit_handler.map.tiles[unit.pos.x][unit.pos.y]
     new_tile = unit_handler.map.tiles[pos.x][pos.y]
 
+    # ACTION
     unit_handler.move_unit(unit, pos)
-
-    assert unit_id in new_tile.units.keys()
-    assert unit_id not in old_tile.units.keys()
-    assert new_tile.units[unit_id] == unit
-    assert unit.tile == new_tile
-    assert unit.pos == pos
+    # MatchHandler object's ASSERTS
+    check_moves_mocker.assert_called_once_with(
+        "H", old_tile.pos, new_tile.pos
+    )  # called with next player
+    add_unit_to_tile_mocker.assert_called_once_with(
+        unit, new_tile
+    )  # called with turn 1 (next turn)
 
 
 @pytest.mark.parametrize(
@@ -85,69 +92,6 @@ def test_move_unit_to_its_own_tile_should_raise_value_error(unit_handler, unit_i
     assert old_tile.units[unit_id] == unit
     assert unit.tile == old_tile
     assert unit.pos == old_tile.pos
-
-
-@pytest.mark.parametrize("direction", [(0, 1), (1, 0), (1, 1)])
-def test_walk_handler_calls_presenter_and_move_with_correct_args(
-    unit_handler, unit_id, direction
-):
-    coord = Coordinate(direction[0], direction[1])
-    unit = unit_handler.units[unit_id]
-    # Mock the helper_method to return a specific value
-    with patch.object(unit_handler, "move_unit", return_value=None) as mocker_move:
-        unit_handler.walk(unit_id, coord)
-        mocker_move.assert_called_once_with(unit, coord)
-        unit_handler.presenter.walk.assert_called_once_with(unit_id, direction)
-
-
-# Calls walk with direction argument out of bound. Direction should be in:
-# (0,-1)|(0,1)|(-1,0)|(1,0)|(1,1)|(-1,-1)|(-1,1)|(1,-1)
-@pytest.mark.parametrize("invalid_dir", [(2, 0), (0, 2), (2, 2), (-2, 0)])
-def test_walk_with_invalid_direction_should_raise_value_error(
-    unit_handler, unit_id, invalid_dir
-):
-    coord = Coordinate(invalid_dir[0], invalid_dir[1])
-    with pytest.raises(ValueError) as exc_info:
-        unit_handler.walk(unit_id, coord)
-    assert (
-        str(exc_info.value)
-        == f"unit_handler.walk direction arg components should be -1, 0 or 1: {coord}"
-    )
-
-
-# the arguments passed attemps to move the unit to a out of bounds position
-@pytest.mark.parametrize("direction", [(0, -1), (-1, 0), (-1, -1)])
-def test_walk_to_out_of_bounds_position_should_call_presenter_show_error_message(
-    unit_handler, unit_id, direction
-):
-    coord = Coordinate(direction[0], direction[1])
-    unit_handler.walk(unit_id, coord)
-    unit_handler.presenter.show_error_message.assert_called_once_with(
-        "Moving unit to position out of bounds!"
-    )
-
-
-# the argument passed attemps to move the unit to it's own position
-def test_walk_to_units_own_position_should_call_presenter_show_error_message(
-    unit_handler, unit_id
-):
-    coord = Coordinate(0, 0)
-    unit_handler.walk(unit_id, coord)
-    unit_handler.presenter.show_error_message.assert_called_once_with(
-        "Moving unit to it's own position!"
-    )
-
-
-# the arguments passed attemps to move the unit to a out of bounds position
-@pytest.mark.parametrize("invalid_unit_id", [0, 1, 62])
-def test_walk_with_invalid_unit_id_should_call_presenter_show_error_message(
-    unit_handler, invalid_unit_id
-):
-    coord = Coordinate(1, 0)
-    unit_handler.walk(invalid_unit_id, coord)
-    unit_handler.presenter.show_error_message.assert_called_once_with(
-        "Could not locate requested unit."
-    )
 
 
 # change that. i'm testing 2 functions.

@@ -7,7 +7,7 @@ from typeguard import TypeCheckError
 
 @pytest.fixture
 def unit_id():
-    return 63
+    return "KH"
 
 
 @pytest.fixture
@@ -46,14 +46,14 @@ def test_add_unit_with_invalid_unit_id_should_raise_type_error(tile, invalid_uni
         tile.add_unit(invalid_unit)
     assert (
         str(exc_info.value)
-        == "\"unit.id\" (<class 'NoneType'>) is not an instance of int"
+        == "\"unit.id\" (<class 'NoneType'>) is not an instance of str"
     )
 
 
 def test_remove_unit_with_invalid_unit_type_should_raise_type_error(tile):
     with pytest.raises(TypeCheckError) as exc_info:
-        tile.remove_unit("foo")
-    assert str(exc_info.value) == 'argument "unit_id" (str) is not an instance of int'
+        tile.remove_unit(10)
+    assert str(exc_info.value) == 'argument "unit_id" (int) is not an instance of str'
 
 
 # Run the test

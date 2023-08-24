@@ -75,10 +75,10 @@ class Tile:
     @typechecked
     def add_unit(self, unit: Unit):
         assert isinstance(
-            unit.id, int
-        ), f'"unit.id" ({type(unit.id)}) is not an instance of int'
+            unit.id, str
+        ), f'"unit.id" ({type(unit.id)}) is not an instance of str'
         self.units[unit.id] = unit
 
     @typechecked
-    def remove_unit(self, unit_id: int):
+    def remove_unit(self, unit_id: str):
         self.units.pop(unit_id)
