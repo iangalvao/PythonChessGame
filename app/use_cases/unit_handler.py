@@ -88,8 +88,8 @@ class UnitHandler:
 
     @typechecked
     def add_unit_to_tile(self, unit: Unit, tile: Tile):
-        unit.tile.remove_unit(unit.id)
         tile.add_unit(unit)
+        unit.tile.remove_unit(unit.id)
         unit.tile = tile
         unit.pos = tile.pos
 
@@ -107,7 +107,6 @@ class UnitHandler:
     def check_move(
         self, unit_type: str, unit_pos: Coordinate, new_pos: Coordinate, player: int
     ):
-        return True
         if unit_type == "H":
             moves = self.horse_moves(unit_pos, player)
         elif unit_type == "T":
@@ -137,3 +136,18 @@ class UnitHandler:
         moves = filter(lambda x: not self.map.out_of_bounds(x), moves)
         moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
         return moves
+
+    def tower_moves(unit_pos, player):
+        pass
+
+    def bishop_moves(unit_pos, player):
+        pass
+
+    def king_moves(unit_pos, player):
+        pass
+
+    def queen_moves(unit_pos, player):
+        pass
+
+    def pawn_moves(unit_pos, player):
+        pass
