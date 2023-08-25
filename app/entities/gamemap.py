@@ -24,6 +24,8 @@ class GameMap:
 
     @typechecked
     def get_tile(self, pos: Coordinate) -> Tile:
+        if self.out_of_bounds(pos):
+            raise ValueError("Position out of bounds!")
         return self.tiles[pos.x][pos.y]
 
     @typechecked

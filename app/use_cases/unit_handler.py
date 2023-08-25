@@ -53,6 +53,24 @@ class UnitHandler:
             self.presenter.show_error_message(str(e))
 
     @typechecked
+    def move(self, unit_id: str, pos: Coordinate):
+        try:
+            new_tile = self.getTileFromPos(pos)
+            unit = self.getUnitByID(unit_id)
+            self.check_move(unit.type, unit.pos, pos)
+            self.add_unit_to_tile(unit, new_tile)
+            self.presenter.show_event("move", unit.pos, new_tile.pos)
+        except ValueError as e:
+            self.presenter.show_error_message(str(e))
+
+    """
+        if self.map.out_of_bounds(pos):
+            raise ValueError("Moving unit to position out of bounds!")
+        if unit.pos == pos:
+            raise ValueError("Moving unit to it's own position!") 
+    """
+
+    @typechecked
     def move_unit(self, unit: Unit, pos: Coordinate) -> None:
         if self.map.out_of_bounds(pos):
             raise ValueError("Moving unit to position out of bounds!")
@@ -76,24 +94,34 @@ class UnitHandler:
         unit.pos = tile.pos
 
     @typechecked
+    def getTileFromPos(self, pos: Coordinate):
+        if self.map.out_of_bounds(pos):
+            raise ValueError("Moving unit to position out of bounds!")
+        return self.map.get_tile(pos)
+
+    @typechecked
     def next_turn(self, unit: Unit):
         pass
 
     @typechecked
-    def check_move(self, type, unit_pos, new_pos, player):
+    def check_move(
+        self, unit_type: str, unit_pos: Coordinate, new_pos: Coordinate, player: int
+    ):
         return True
-        if type == "H":
-            return new_pos in self.horse_moves(unit_pos, player)
-        elif type == "T":
-            return new_pos in self.tower_moves(unit_pos, player)
-        elif type == "B":
-            return new_pos in self.bishop_moves(unit_pos, player)
-        elif type == "K":
-            return new_pos in self.king_moves(unit_pos, player)
-        elif type == "Q":
-            return new_pos in self.queen_moves(unit_pos, player)
-        elif type == "P":
-            return new_pos in self.pawn_moves(unit_pos, player)
+        if unit_type == "H":
+            moves = self.horse_moves(unit_pos, player)
+        elif unit_type == "T":
+            moves = self.tower_moves(unit_pos, player)
+        elif unit_type == "B":
+            moves = self.bishop_moves(unit_pos, player)
+        elif unit_type == "K":
+            moves = self.king_moves(unit_pos, player)
+        elif unit_type == "Q":
+            moves = self.queen_moves(unit_pos, player)
+        elif unit_type == "P":
+            moves = self.pawn_moves(unit_pos, player)
+        if new_pos not in moves:
+            raise ValueError(f"Invalid move: {unit_type} from {unit_pos} to {new_pos}")
 
     def horse_moves(self, pos, player):
         moves = []
@@ -104,8 +132,8 @@ class UnitHandler:
                         i * (pos.x + j * -1, pos.y + k * -2)
                         + ((i + 1) % 2) * (pos.y + k * -2, pos.x + j * -1)
                     )
-                    moves.append(move)
+                    moves.append(Coordinate(move))
 
-        moves = filter(self.map.out_of_bounds(), moves)
-        moves = filter(has_player_units(player), moves)
+        moves = filter(lambda x: not self.map.out_of_bounds(x), moves)
+        moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
         return moves
