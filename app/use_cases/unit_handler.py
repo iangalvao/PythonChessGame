@@ -63,23 +63,6 @@ class UnitHandler:
         except ValueError as e:
             self.presenter.show_error_message(str(e))
 
-    """
-        if self.map.out_of_bounds(pos):
-            raise ValueError("Moving unit to position out of bounds!")
-        if unit.pos == pos:
-            raise ValueError("Moving unit to it's own position!") 
-    """
-
-    @typechecked
-    def move_unit(self, unit: Unit, pos: Coordinate) -> None:
-        if self.map.out_of_bounds(pos):
-            raise ValueError("Moving unit to position out of bounds!")
-        if unit.pos == pos:
-            raise ValueError("Moving unit to it's own position!")
-        new_tile = self.map.get_tile(pos)
-        if self.check_move(unit.type, unit.pos, pos):
-            self.add_unit_to_tile(unit, new_tile)
-
     @typechecked
     def getUnitByID(self, unit_id: str) -> Unit:
         if unit_id not in self.units.keys():

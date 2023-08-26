@@ -38,7 +38,7 @@ def unit_handler(unit_id, unit, start_pos):
 )
 @patch("app.use_cases.unit_handler.UnitHandler.add_unit_to_tile", return_value=None)
 @patch("app.use_cases.unit_handler.UnitHandler.check_move", return_value=True)
-def test_call_to_moveUnit_should_call_getUnitById_getTileFromPos_checkMove_addUnitToTile_and_presenter_showEvent(
+def test_call_to_move_should_call_getUnitById_getTileFromPos_checkMove_addUnitToTile_and_presenter_showEvent(
     check_moves_mocker, add_unit_to_tile_mocker, pos, unit_handler: UnitHandler, unit_id
 ):
     # SETUP
