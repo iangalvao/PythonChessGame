@@ -122,8 +122,13 @@ class UnitHandler:
         # moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
         return moves
 
-    def tower_moves(unit_pos, player):
-        pass
+    def tower_moves(self, unit_pos, player):
+        moves = []
+        for i in range(unit_pos.x + 1, self.map.size):
+            pos = Coordinate(i, unit_pos.y)
+            if self.check_player_unit(pos, player):
+                break
+            moves.append(pos)
 
     def bishop_moves(unit_pos, player):
         pass
@@ -136,3 +141,7 @@ class UnitHandler:
 
     def pawn_moves(unit_pos, player):
         pass
+
+    def check_player_unit(self, pos, player):
+        tile = self.getTileFromPos(pos)
+        return tile.getUnit().player == player
