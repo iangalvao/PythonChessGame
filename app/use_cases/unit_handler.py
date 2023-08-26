@@ -122,22 +122,29 @@ class UnitHandler:
         # moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
         return moves
 
-    def tower_moves(self, unit_pos, player):
-        moves = []
-        for i in range(unit_pos.x + 1, self.map.size):
-            pos = Coordinate(i, unit_pos.y)
-            if self.check_player_unit(pos, player):
-                break
-            moves.append(pos)
+    def tower_moves(self, unit_pos: Coordinate, player: int):
+        axis_list = ((0, 1), (1, 0), (0, -1), (-1, 0))
+        return self.unit_moves_from_axis_list(unit_pos, player, axis_list)
 
-    def bishop_moves(unit_pos, player):
-        pass
+    def bishop_moves(self, unit_pos: Coordinate, player: int):
+        axis_list = ((1, 1), (1, -1), (-1, 1), (-1, -1))
+        return self.unit_moves_from_axis_list(unit_pos, player, axis_list)
 
     def king_moves(unit_pos, player):
         pass
 
-    def queen_moves(unit_pos, player):
-        pass
+    def queen_moves(self, unit_pos: Coordinate, player: int):
+        axis_list = (
+            (1, 1),
+            (1, -1),
+            (-1, 1),
+            (-1, -1),
+            (0, 1),
+            (1, 0),
+            (0, -1),
+            (-1, 0),
+        )
+        return self.unit_moves_from_axis_list(unit_pos, player, axis_list)
 
     def pawn_moves(unit_pos, player):
         pass
@@ -145,3 +152,24 @@ class UnitHandler:
     def check_player_unit(self, pos, player):
         tile = self.getTileFromPos(pos)
         return tile.getUnit().player == player
+
+    def unit_moves_on_axis(self, pos, axis, player):
+        moves = []
+        while not self.map.out_of_bounds(pos):
+            pos += axis
+            tile = self.getTileFromPos(pos)
+            if tile.units:
+                if tile.getUnit().player == player:
+                    break
+                else:
+                    moves.append(pos)
+                    break
+            moves.append(pos)
+        return moves
+
+    def unit_moves_from_axis_list(self, pos, player, axis_list):
+        moves = []
+        for axis in axis_list:
+            for move in self.unit_moves_on_axis(pos, axis, player):
+                moves.append(move)
+        return moves
