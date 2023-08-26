@@ -17,3 +17,11 @@ class Coordinate:
 
     def __repr__(self) -> str:
         return "Coordinate " + self.__str__()
+
+    def __mul__(self, other):
+        assert isinstance(other, int)
+        return Coordinate(self.x * other, self.y * other)
+
+    def __rmul__(self, other):
+        assert isinstance(other, int)
+        return Coordinate(self.x * other, self.y * other)

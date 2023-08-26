@@ -23,7 +23,7 @@ def unit(unit_id):
 
 @pytest.fixture
 def unit_handler(unit_id, unit, start_pos):
-    map = GameMap(5)
+    map = GameMap(8)
     presenter = MagicMock()
     map.tiles[start_pos.x][start_pos.y].add_unit(unit)
     unit.pos = start_pos
@@ -69,8 +69,8 @@ def test_call_to_move_should_call_getUnitById_getTileFromPos_checkMove_addUnitTo
     [
         Coordinate(-1, 1),  # negative value on x coordinate
         Coordinate(1, -1),  # negative value on y coordinate
-        Coordinate(5, 3),  # value equal to map size on x coordinate
-        Coordinate(3, 5),  # value equal to map size on y coordinate
+        Coordinate(8, 3),  # value equal to map size on x coordinate
+        Coordinate(3, 8),  # value equal to map size on y coordinate
     ],
 )
 def test_call_to_getTileFromPos_with_to_out_of_bounds_position_should_raise_value_error(
@@ -149,6 +149,28 @@ def test_call_to_check_moves_with_invalid_move_for_each_unit_type_should_raise_v
                 == f"Invalid move: {unit_type} from {start_pos} to {wrong_pos}"
             )
             unit_moves_mocker.assert_called_once_with(start_pos, active_player)
+
+
+@pytest.mark.parametrize(
+    "pos, expected_results",
+    [
+        ((0, 0), [(1, 2), (2, 1)]),
+        ((1, 0), [(0, 2), (2, 2), (3, 1)]),
+        ((7, 7), [(6, 5), (5, 6)]),
+        ((5, 5), [(6, 7), (7, 6), (6, 3), (7, 4), (4, 7), (3, 6), (3, 4), (4, 3)]),
+    ],
+)
+def test_horse_moves_should_return_all_valid_horse_moves(
+    unit_handler: UnitHandler, pos, expected_results
+):
+    pos = Coordinate(pos[0], pos[1])
+
+    moves = unit_handler.horse_moves(pos, 0)
+
+    for res in expected_results:
+        assert Coordinate(res[0], res[1]) in moves
+    for move in moves:
+        assert (move.x, move.y) in expected_results
 
 
 # Run the test

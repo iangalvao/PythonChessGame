@@ -105,19 +105,21 @@ class UnitHandler:
         if new_pos not in moves:
             raise ValueError(f"Invalid move: {unit_type} from {unit_pos} to {new_pos}")
 
-    def horse_moves(self, pos, player):
+    def horse_moves(self, pos: Coordinate, player: int):
         moves = []
         for i in (0, 1):
             for j in (-1, 1):
                 for k in (-1, 1):
-                    move = pos + (
-                        i * (pos.x + j * -1, pos.y + k * -2)
-                        + ((i + 1) % 2) * (pos.y + k * -2, pos.x + j * -1)
+                    move = (
+                        pos
+                        + i * Coordinate(j * -1, k * -2)
+                        + ((i + 1) % 2) * Coordinate(j * -2, k * -1)
                     )
-                    moves.append(Coordinate(move))
 
-        moves = filter(lambda x: not self.map.out_of_bounds(x), moves)
-        moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
+                    moves.append(move)
+
+        moves = list(filter(lambda x: not self.map.out_of_bounds(x), moves))
+        # moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
         return moves
 
     def tower_moves(unit_pos, player):
