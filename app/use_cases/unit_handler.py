@@ -22,37 +22,6 @@ class UnitHandler:
         self.presenter = presenter
 
     @typechecked
-    def walk(self, unit_id: int, direction: Coordinate) -> None:
-        if direction.x not in (-1, 0, 1) or direction.y not in (-1, 0, 1):
-            raise ValueError(
-                f"unit_handler.walk direction arg components should be -1, 0 or 1: {direction}"
-            )
-
-        # try:
-        #    unit = self.getUnitByID(unit_id)
-        #    new_pos = unit.pos + direction
-        #    action = check_if_movable(tile, unit)
-        #    if action == "move":
-        #       self.move_unit(unit, new_pos)
-        #    if action == "combat":
-        #       self.attack(unit, new_pos)
-        #    self.presenter.send_event(action + ...)
-        # except ValueError as e:
-        #   self.presenter.send_error_message(str(e))
-        # except KeyError as e:
-        #   self.presenter.send_error_message(str(e))
-
-        try:
-            unit = self.getUnitByID(unit_id)
-            new_pos = unit.pos + direction
-
-            self.move_unit(unit, new_pos)
-            self.presenter.walk(unit_id, (new_pos.x, new_pos.y))
-
-        except ValueError as e:
-            self.presenter.show_error_message(str(e))
-
-    @typechecked
     def move(self, unit_id: str, pos: Coordinate):
         try:
             new_tile = self.getTileFromPos(pos)
@@ -119,8 +88,14 @@ class UnitHandler:
                     moves.append(move)
 
         moves = list(filter(lambda x: not self.map.out_of_bounds(x), moves))
-        # moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves)
+        # moves = filter(lambda x: self.getTileFromPos(x).unit.player != player, moves) #SHould be a function itself.
         return moves
+
+    def valid_moves(self, pos: Coordinate, player: int):
+        # check if there are player units.
+        # check if the move causes a xeque. (just by removing the unit from position it should be possible to know)
+        # Optional: check if move in tile_list
+        pass
 
     def tower_moves(self, unit_pos: Coordinate, player: int):
         axis_list = ((0, 1), (1, 0), (0, -1), (-1, 0))
@@ -173,3 +148,55 @@ class UnitHandler:
             for move in self.unit_moves_on_axis(pos, axis, player):
                 moves.append(move)
         return moves
+
+    @typechecked
+    def check_xeque(self, player: int):
+        threats = []
+        for unit in self.check_enemy_on_axis_list(tower_axis):
+            if unit.type in ["Q", "T"]:
+                threats += 1
+        for unit in self.check_enemy_on_axis_list(bishop_axis):
+            if unit.type in ["Q", "B"]:
+                threats += 1
+        # same for horse and pawn
+        pass
+
+    def check_enemy_on_axis(self, axis, pos, player):
+        moves = self.unit_moves_on_axis
+        last_pos = moves[-1]
+        # check if there is a enemy there, return enemy or none
+        pass
+
+    def check_enemy_on_axis_list(self, axis, pos, player):
+        # same from the above, but return a list of units
+        pass
+
+    # Should call check_check for checking the units that threatens the king.
+    # If two or more threats, valid_kings_moves tells if the are any valid move at all.
+    # If zero threats, then return false
+    # If one threat, should call valid_king_moves. if return is non-empty return False
+    # Else it should check for units that might kill or block.
+    # Should call empty_tiles_in_axis and add the tile with the threat.
+    # For each of those, try to get a unit to move to it. can_move_to_tile_list?
+    def check_mate(self, player):
+        if self.check_xeque(self, player) > 1:
+            return self.king_moves(king, kingpos).isempty()
+        elif self.check_xeque(self, player) == 1:
+            if not self.king_moves(king, kingpos).isempty():
+                return False
+            for unit in player.units:
+                if not self.unit_moves(unit, unitpos).isempty():
+                    return False
+        return True
+
+
+# before moving:
+#  check movalbe
+#  check in unit type moveset
+#  check for player's units
+
+# after moving:
+# check xeque
+#   check two xeques (from the first)
+#   check xeque mate (using units and number of xeques)
+#
