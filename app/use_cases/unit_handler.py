@@ -126,7 +126,10 @@ class UnitHandler:
 
     def check_player_unit(self, pos, player):
         tile = self.getTileFromPos(pos)
-        return tile.getUnit().player == player
+        unit = tile.getUnit()
+        if unit:
+            return unit.player == player
+        return False
 
     def unit_moves_on_axis(self, pos, axis, player):
         moves = []

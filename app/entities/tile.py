@@ -82,3 +82,10 @@ class Tile:
     @typechecked
     def remove_unit(self, unit_id: str):
         self.units.pop(unit_id)
+
+    def getUnit(self):
+        units = list(self.units.keys())
+        if len(units) > 0:
+            return units[0]
+        else:
+            return None

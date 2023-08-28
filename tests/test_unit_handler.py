@@ -1,4 +1,5 @@
 import pytest
+from app.entities.tile import Tile
 from app.entities.unit import Unit
 from app.use_cases.unit_handler import UnitHandler
 from app.entities.gamemap import GameMap
@@ -171,6 +172,42 @@ def test_horse_moves_should_return_all_valid_horse_moves(
         assert Coordinate(res[0], res[1]) in moves
     for move in moves:
         assert (move.x, move.y) in expected_results
+
+
+def test_check_player_units_on_empty_tile_should_return_false(
+    unit_handler: UnitHandler, start_pos: Coordinate
+):
+    coord = Coordinate(3, 3)
+    player = 0
+    tile = Tile(coord)
+    with patch.object(
+        unit_handler, "getTileFromPos", return_value=tile
+    ) as get_tile_mocker, patch.object(
+        tile, "getUnit", return_value=None
+    ) as get_unit_mocker:
+        units_on_coord = unit_handler.check_player_unit(coord, player)
+
+    assert units_on_coord == False
+    get_tile_mocker.assert_called_once_with(coord)
+    get_unit_mocker.assert_called_once_with()
+
+
+def test_check_player_units_on_tile_with_player_unit_should_return_true(
+    unit_handler: UnitHandler, start_pos: Coordinate, unit: Unit
+):
+    coord = Coordinate(3, 3)
+    player = 0
+    tile = Tile(coord)
+    with patch.object(
+        unit_handler, "getTileFromPos", return_value=tile
+    ) as get_tile_mocker, patch.object(
+        tile, "getUnit", return_value=unit
+    ) as get_unit_mocker:
+        units_on_coord = unit_handler.check_player_unit(coord, player)
+
+    assert units_on_coord == True
+    get_tile_mocker.assert_called_once_with(coord)
+    get_unit_mocker.assert_called_once_with()
 
 
 # Run the test
