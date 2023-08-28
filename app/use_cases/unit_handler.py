@@ -149,6 +149,7 @@ class UnitHandler:
                 moves.append(move)
         return moves
 
+    """ 
     @typechecked
     def check_xeque(self, player: int):
         threats = []
@@ -159,7 +160,7 @@ class UnitHandler:
             if unit.type in ["Q", "B"]:
                 threats += 1
         # same for horse and pawn
-        pass
+        pass """
 
     def check_enemy_on_axis(self, axis, pos, player):
         moves = self.unit_moves_on_axis
@@ -178,7 +179,7 @@ class UnitHandler:
     # Else it should check for units that might kill or block.
     # Should call empty_tiles_in_axis and add the tile with the threat.
     # For each of those, try to get a unit to move to it. can_move_to_tile_list?
-    def check_mate(self, player):
+    """ def check_mate(self, player):
         if self.check_xeque(self, player) > 1:
             return self.king_moves(king, kingpos).isempty()
         elif self.check_xeque(self, player) == 1:
@@ -188,6 +189,7 @@ class UnitHandler:
                 if not self.unit_moves(unit, unitpos).isempty():
                     return False
         return True
+ """
 
 
 # before moving:
