@@ -47,7 +47,16 @@ def test_call_to_walk_with_invalid_direction_should_raise_value_error(
 
 @pytest.mark.parametrize(
     "input_direction, expected_result",
-    [(1, (-1, -1)), (2, (0, -1)), (3, (1, -1)), (8, (0, 1)), (9, (1, 1))],
+    [
+        (1, (-1, -1)),
+        (2, (0, -1)),
+        (3, (1, -1)),
+        (4, (-1, 0)),
+        (6, (1, 0)),
+        (7, (-1, 1)),
+        (8, (0, 1)),
+        (9, (1, 1)),
+    ],
 )
 def test_call_to_parse_direction_with_valid_args(
     command_handler: CommandHandler,

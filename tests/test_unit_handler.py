@@ -177,16 +177,19 @@ def test_horse_moves_should_return_all_valid_horse_moves(
 def test_check_player_units_on_empty_tile_should_return_false(
     unit_handler: UnitHandler, start_pos: Coordinate
 ):
+    # SETUP
     coord = Coordinate(3, 3)
     player = 0
     tile = Tile(coord)
+    # MOCKING
     with patch.object(
         unit_handler, "getTileFromPos", return_value=tile
     ) as get_tile_mocker, patch.object(
         tile, "getUnit", return_value=None
     ) as get_unit_mocker:
+        # ACTION
         units_on_coord = unit_handler.check_player_unit(coord, player)
-
+    # ASSERTS
     assert units_on_coord == False
     get_tile_mocker.assert_called_once_with(coord)
     get_unit_mocker.assert_called_once_with()
@@ -195,17 +198,36 @@ def test_check_player_units_on_empty_tile_should_return_false(
 def test_check_player_units_on_tile_with_player_unit_should_return_true(
     unit_handler: UnitHandler, start_pos: Coordinate, unit: Unit
 ):
+    # SETUP
+    player = 0
+
+    units_on_coord = unit_handler.check_player_unit(start_pos, player)
+
+    # ASSERTS
+    assert units_on_coord == True
+
+
+def test_check_player_units_on_tile_with_other_player_unit_should_return_false(
+    unit_handler: UnitHandler, start_pos: Coordinate, unit: Unit
+):
+    # SETUP
     coord = Coordinate(3, 3)
     player = 0
     tile = Tile(coord)
+
+    # MOCKING
     with patch.object(
         unit_handler, "getTileFromPos", return_value=tile
     ) as get_tile_mocker, patch.object(
         tile, "getUnit", return_value=unit
     ) as get_unit_mocker:
-        units_on_coord = unit_handler.check_player_unit(coord, player)
+        # ACTION
+        units_on_coord = unit_handler.check_player_unit(
+            coord, player + 1
+        )  # calling with diferent player
 
-    assert units_on_coord == True
+    # ASSERTS
+    assert units_on_coord == False
     get_tile_mocker.assert_called_once_with(coord)
     get_unit_mocker.assert_called_once_with()
 

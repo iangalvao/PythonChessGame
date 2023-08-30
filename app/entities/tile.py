@@ -86,6 +86,7 @@ class Tile:
     def getUnit(self):
         units = list(self.units.keys())
         if len(units) > 0:
-            return units[0]
+            k = units[0]
+            return self.units[k]
         else:
             return None
